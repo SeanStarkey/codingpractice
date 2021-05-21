@@ -1,3 +1,6 @@
+//
+// Facebook's Practice Interview Question #3
+//
 
 #include <string>
 #include <iostream>

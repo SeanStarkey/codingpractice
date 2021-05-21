@@ -1,3 +1,6 @@
+//
+// Facebook's Practice Interview Question #2
+//
 
 #include <queue>
 #include <string>

@@ -1,6 +1,9 @@
+//
+// Heap data structure
+//
+
 #include <iostream>
 
-// Heap data structure
 class Heap
 {
 public:
