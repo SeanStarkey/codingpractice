@@ -4,112 +4,137 @@
 
 #include <iostream>
 
-class Tree
-{
+class Node {
 public:
     int value;
-    Tree* left;
-    Tree* right;
+    Node* left;
+    Node* right;
 
-    Tree(int newValue)
-        {
-            value = newValue;
-            left = NULL;
-            right = NULL;
+    Node(int newValue) {
+        value = newValue;
+        left = NULL;
+        right = NULL;
+    }
+
+    void display(int level, bool leftDisplay) {
+        for (int i=0; i<level; i++)
+            std::cout << "| ";
+        if (!leftDisplay)
+            std::cout << ".";
+        std::cout << value;
+        if (leftDisplay)
+            std::cout << ".";
+        std::cout << std::endl;
+        if (left != NULL) {
+            left->display(level+1, true);
         }
-
-    void display()
-        {
-            display(0, true);
+        if (right != NULL) {
+            right->display(level+1, false);
         }
+    }
 
-    void display(int level, bool leftDisplay)
+    void insertNode(Node* n) {
+        if (n->value == value)
         {
-            for (int i=0; i<level; i++)
-                std::cout << "| ";
-            if (!leftDisplay)
-                std::cout << ".";
-            std::cout << value;
-            if (leftDisplay)
-                std::cout << ".";
-            std::cout << std::endl;
-            if (left != NULL) {
-                left->display(level+1, true);
-            }
-            if (right != NULL) {
-                right->display(level+1, false);
-            }
+            n->left = this->left;
+            n->right = this;
         }
-
-    void insert(int newValue)
+        else if (n->value < value)
         {
-            Tree* n = new Tree(newValue);
-            insert(n);
-        }
-
-    void insert(Tree* n)
-        {
-            if (n->value == value)
-            {
-                n->left = this->left;
-                n->right = this;
-            }
-            else if (n->value < value)
-            {
-                if (left == NULL)
-                    this->left = n;
-                else
-                    this->left->insert(n);
-            }
+            if (left == NULL)
+                this->left = n;
             else
-            {
-                if (right == NULL)
-                    this->right = n;
-                else
-                    this->right->insert(n);
-            }
+                this->left->insertNode(n);
         }
-
-    void traverseDisplay()
+        else
         {
-            if (left != NULL)
-                left->traverseDisplay();
-            std::cout << value << std::endl;
-            if (right != NULL)
-                right->traverseDisplay();
+            if (right == NULL)
+                this->right = n;
+            else
+                this->right->insertNode(n);
         }
+    }
 
-    Tree* find(int value_in)
-        {
-            if (value == value_in) {
-                return this;
-            }
-            else if (value_in < value) {
-                if (left == NULL)
-                    return NULL;
-                else
-                    return left->find(value_in);
-            }
-            else {
-                if (right == NULL)
-                    return NULL;
-                else
-                    return right->find(value_in);
-            }
+    void inOrderTraverseDisplay() {
+        if (left != NULL)
+            left->inOrderTraverseDisplay();
+        std::cout << value << std::endl;
+        if (right != NULL)
+            right->inOrderTraverseDisplay();
+    }
+
+    Node* findNode(int value_in) {
+        if (value == value_in) {
+            return this;
         }
+        else if (value_in < value) {
+            if (left == NULL)
+                return NULL;
+            else
+                return left->findNode(value_in);
+        }
+        else {
+            if (right == NULL)
+                return NULL;
+            else
+                return right->findNode(value_in);
+        }
+    }
+};
+
+
+class Tree {
+public:
+    Tree() {
+        head = NULL;
+    }
+
+    void display() {
+        head->display(0, true);
+    }
+
+    void insertNode(int newValue) {
+        Node* n = new Node(newValue);
+        if (head == NULL)
+            head = n;
+        else
+            head->insertNode(n);
+    }
+
+    void inOrderTraverseDisplay() {
+        if (head == NULL)
+            return;
+        head->inOrderTraverseDisplay();
+    }
+
+    Node* findNode(int value_in) {
+        return head->findNode(value_in);
+    }
+
+    bool deleteNode(int value_in) {
+        return false;
+    }
+
+    bool deleteNode(Tree* node) {
+        return false;
+    }
+
+private:
+    int value;
+    Node* head;
 };
 
 
 int main()
 {
+    Tree t;
     srand(time(NULL));
-    Tree* t = new Tree(rand()%100);
     for (int i=0; i<20; i++)
-        t->insert(rand()%100);
+        t.insertNode(rand()%100);
 
-    t->display();
+    t.display();
     std::cout << std::endl;
-    t->traverseDisplay();
+    t.inOrderTraverseDisplay();
 
     std::cout << std::endl;
     bool found = false;
@@ -117,7 +142,7 @@ int main()
     {
         int value = rand()%100;
         std::cout << "Looking for " << value << std::endl;
-        Tree* n = t->find(value);
+        Node* n = t.findNode(value);
         if (n != NULL) {
             found = true;
             std::cout << "Found " << value << std::endl;
