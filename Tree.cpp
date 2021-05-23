@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <utility>
 
 class Node {
 public:
@@ -80,7 +81,16 @@ public:
                 return right->findNode(value_in);
         }
     }
+
+    Node* minValueNode(int value_in) {
+        Node* current = this;
+        while (current && (current->left != NULL))
+            current = current->left;
+        return current;
+    }
+
 };
+
 
 
 class Tree {
@@ -90,6 +100,8 @@ public:
     }
 
     void display() {
+        if (head == NULL)
+            return;
         head->display(0, true);
     }
 
@@ -101,6 +113,7 @@ public:
             head->insertNode(n);
     }
 
+
     void inOrderTraverseDisplay() {
         if (head == NULL)
             return;
@@ -111,41 +124,81 @@ public:
         return head->findNode(value_in);
     }
 
-    bool deleteNode(int value_in) {
-        return false;
+    void deleteNode(int value_in) {
+        head = deleteNode(head, value_in);
     }
 
-    bool deleteNode(Tree* node) {
-        return false;
+    Node* deleteNode(Node* root, int value_in) {
+        if (root == NULL) {
+            return NULL;
+        }
+
+        if (value_in < root->value) {
+            root->left = deleteNode(root->left, value_in);
+            return root;
+        } else if (value_in > root->value) {
+            root->right = deleteNode(root->right, value_in);
+            return root;
+        } else {
+            if ((root->left == NULL) && (root->right == NULL)) {
+                delete root;
+                return NULL;
+            }
+            if (root->left == NULL) {
+                Node* temp = root->right;
+                delete root;
+                return temp;
+            } else if (root->right == NULL) {
+                Node* temp = root->left;
+                delete root;
+                return temp;
+            } else {
+                Node* temp = root->right->minValueNode(value_in);
+                root->value = temp->value;
+                root->right = deleteNode(root->right, temp->value);
+                return root;
+            }
+        }
     }
 
 private:
-    int value;
     Node* head;
 };
 
 
 int main()
 {
-    Tree t;
-    srand(time(NULL));
-    for (int i=0; i<20; i++)
-        t.insertNode(rand()%100);
+    const int range = 100;
+    const int number = 10;
+    const int deletes = 5;
 
+    Tree t;
+
+    srand(time(NULL));
+    for (int i=0; i<number; i++)
+        t.insertNode(rand()%range);
+
+    for (int i=0; i<deletes; i++)
+    {
+        t.display();
+        std::cout << std::endl;
+        t.inOrderTraverseDisplay();
+
+        std::cout << std::endl;
+        bool found = false;
+        while (!found)
+        {
+            int value = rand()%range;
+            Node* n = t.findNode(value);
+            if (n != NULL) {
+                found = true;
+                std::cout << "Deleting... " << value << std::endl;
+                std::cout << std::endl;
+                t.deleteNode(value);
+            }
+        }
+    }
     t.display();
     std::cout << std::endl;
     t.inOrderTraverseDisplay();
-
-    std::cout << std::endl;
-    bool found = false;
-    while (!found)
-    {
-        int value = rand()%100;
-        std::cout << "Looking for " << value << std::endl;
-        Node* n = t.findNode(value);
-        if (n != NULL) {
-            found = true;
-            std::cout << "Found " << value << std::endl;
-        }
-    }
 }
