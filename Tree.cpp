@@ -4,12 +4,14 @@
 
 #include <iostream>
 #include <utility>
+#include <queue>
 
 class Node {
 public:
     int value;
     Node* left;
     Node* right;
+    bool visited;
 
     Node(int newValue) {
         value = newValue;
@@ -19,7 +21,7 @@ public:
 
     void display(int level, bool leftDisplay) {
         for (int i=0; i<level; i++)
-            std::cout << "| ";
+            std::cout << "|  ";
         if (!leftDisplay)
             std::cout << ".";
         std::cout << value;
@@ -89,6 +91,13 @@ public:
         return current;
     }
 
+    void clearVisited() {
+        visited = false;
+        if (left != NULL)
+            left->clearVisited();
+        if (right != NULL)
+            right->clearVisited();
+    }
 };
 
 
@@ -115,6 +124,7 @@ public:
 
 
     void inOrderTraverseDisplay() {
+        std::cout << "In Order Traverse" << std::endl;
         if (head == NULL)
             return;
         head->inOrderTraverseDisplay();
@@ -161,6 +171,25 @@ public:
         }
     }
 
+    void breadthFirstDisplay() {
+        std::cout << "Breadth First" << std::endl;
+        if (head == NULL)
+            return;
+        head->clearVisited();
+        std::queue<Node*> bfs;
+        bfs.push(head);
+        while (!bfs.empty())
+        {
+            Node* next = bfs.front();
+            bfs.pop();
+            if (next->left)
+                bfs.push(next->left);
+            if (next->right)
+                bfs.push(next->right);
+            std::cout << next->value << std::endl;
+        }
+    }
+
 private:
     Node* head;
 };
@@ -169,8 +198,8 @@ private:
 int main()
 {
     const int range = 100;
-    const int number = 10;
-    const int deletes = 5;
+    const int number = 20;
+    const int deletes = 0;
 
     Tree t;
 
@@ -201,4 +230,7 @@ int main()
     t.display();
     std::cout << std::endl;
     t.inOrderTraverseDisplay();
+
+    std::cout << std::endl;
+    t.breadthFirstDisplay();
 }
