@@ -12,11 +12,13 @@
 const int ALPHABET_SIZE=26;
 
 struct Node {
+    static int numberOfNodes;
     char value;
     Node* next[ALPHABET_SIZE];
     bool endOfWord;
 
     Node(int in_value) : value(in_value) {
+        numberOfNodes++;
         for (int i=0; i<ALPHABET_SIZE; i++)
             next[i] = nullptr;
     }
@@ -24,6 +26,8 @@ struct Node {
     void display(int level);
     std::vector<std::string> getAllWords(std::vector<std::string> words, std::string start);
 };
+
+int Node::numberOfNodes = 0;
 
 class Trie {
 public:
@@ -101,11 +105,16 @@ std::vector<std::string> Node::getAllWords(std::vector<std::string> words, std::
 int main() {
     Trie t;
 
+    std::cout << "Reading dictionary..." << std::endl;
     std::fstream file("../english-words/words_alpha.txt");
     std::string word;
+    int wordCount = 0;
     while (file >> word) {
         t.insert(word);
+        wordCount++;
     }
+    std::cout << "Number of words: " << wordCount << std::endl;
+    std::cout << "Number of nodes: " << Node::numberOfNodes << std::endl;
 
     std::vector<std::string> words = t.autocomplete("zy");
     for (int i=0; i<words.size(); i++) {
