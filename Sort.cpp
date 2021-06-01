@@ -21,6 +21,27 @@ void displayArray(Array array) {
 
 
 
+void insertionSort(Array& array) {
+    for (int i=1; i<SIZE; i++) {
+        int toCheck = i-1;
+        while (true) {
+            if (toCheck == -1)
+                break;
+            if (array[i] < array[toCheck])
+                toCheck--;
+            else
+                break;
+        }
+        int temp = array[i];
+        for (int j=i-1; j>toCheck; j--) {
+            array[j+1] = array[j];
+        }
+        array[toCheck+1] = temp;
+    }
+}
+
+
+
 void mergeArrays(Array& array, Array& temp, int leftStart, int rightEnd) {
     int size = rightEnd - leftStart;
     int leftEnd = leftStart + size/2;
@@ -75,9 +96,17 @@ Array randomArray() {
 }
 
 int main() {
+    std::cout << "InsertionSort" << std::endl;
+    Array insertion = randomArray();
+    displayArray(insertion);
+    insertionSort(insertion);
+    displayArray(insertion);
+    std::cout << std::endl;
+
     std::cout << "MergeSort" << std::endl;
     Array merge = randomArray();
     displayArray(merge);
     mergeSort(merge);
     displayArray(merge);
+    std::cout << std::endl;
 }
