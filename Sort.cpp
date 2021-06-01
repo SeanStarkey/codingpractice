@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <time.h>
 #include <stdlib.h>
 
@@ -54,9 +55,7 @@ void maxHeapify(Array& array, int i, int size) {
         largest = r;
 
     if (largest != i) {
-        int swap = array[i];
-        array[i] = array[largest];
-        array[largest] = swap;
+        std::swap(array[i], array[largest]);
         maxHeapify(array, largest, size);
     }
 }
@@ -65,9 +64,7 @@ void heapSort(Array& array) {
     for (int size=SIZE; size>1; size--) {
         for (int i=size/2; i>=0; i--)
             maxHeapify(array, i, size);
-        int swap = array[0];
-        array[0] = array[size-1];
-        array[size-1] = swap;
+        std::swap(array[0], array[size-1]);
     }
 }
 
@@ -116,6 +113,32 @@ Array mergeSort(Array& array) {
 
 
 
+int partition(Array& array, int low, int high) {
+    int pivot = array[high];
+    int i = low;
+    for (int j=low; j<high; j++) {
+        if (array[j] < pivot) {
+            std::swap(array[i], array[j]);
+            i++;
+        }
+    }
+    std::swap(array[i], array[high]);
+    return i;
+}
+
+void quickSort(Array& array, int low, int high) {
+    if (low < high) {
+        int pivot = partition(array, low, high);
+        quickSort(array, low, pivot-1);
+        quickSort(array, pivot+1, high);
+    }
+}
+
+void quickSort(Array& array) {
+    quickSort(array, 0, SIZE-1);
+}
+
+
 Array randomArray() {
     Array ret(SIZE);
 
@@ -146,5 +169,12 @@ int main() {
     displayArray(merge);
     mergeSort(merge);
     displayArray(merge);
+    std::cout << std::endl;
+
+    std::cout << "QuickSort" << std::endl;
+    Array quick = randomArray();
+    displayArray(quick);
+    quickSort(quick);
+    displayArray(quick);
     std::cout << std::endl;
 }
