@@ -42,6 +42,37 @@ void insertionSort(Array& array) {
 
 
 
+void maxHeapify(Array& array, int i, int size) {
+    int l = 2*i + 1;
+    int r = 2*i + 2;
+    int largest = i;
+
+    if ((l < size) && (array[l] > array[largest]))
+        largest = l;
+
+    if ((r < size) && (array[r] > array[largest]))
+        largest = r;
+
+    if (largest != i) {
+        int swap = array[i];
+        array[i] = array[largest];
+        array[largest] = swap;
+        maxHeapify(array, largest, size);
+    }
+}
+
+void heapSort(Array& array) {
+    for (int size=SIZE; size>1; size--) {
+        for (int i=size/2; i>=0; i--)
+            maxHeapify(array, i, size);
+        int swap = array[0];
+        array[0] = array[size-1];
+        array[size-1] = swap;
+    }
+}
+
+
+
 void mergeArrays(Array& array, Array& temp, int leftStart, int rightEnd) {
     int size = rightEnd - leftStart;
     int leftEnd = leftStart + size/2;
@@ -101,6 +132,13 @@ int main() {
     displayArray(insertion);
     insertionSort(insertion);
     displayArray(insertion);
+    std::cout << std::endl;
+
+    std::cout << "HeapSort" << std::endl;
+    Array heap = randomArray();
+    displayArray(heap);
+    heapSort(heap);
+    displayArray(heap);
     std::cout << std::endl;
 
     std::cout << "MergeSort" << std::endl;
