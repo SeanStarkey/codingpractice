@@ -24,20 +24,20 @@ void displayArray(Array array) {
 
 void insertionSort(Array& array) {
     for (int i=1; i<SIZE; i++) {
+        int valueToInsert = array[i];
         int toCheck = i-1;
         while (true) {
             if (toCheck == -1)
                 break;
-            if (array[i] < array[toCheck])
+            if (valueToInsert < array[toCheck])
                 toCheck--;
             else
                 break;
         }
-        int temp = array[i];
-        for (int j=i-1; j>toCheck; j--) {
-            array[j+1] = array[j];
+        for (int shift=i-1; shift>toCheck; shift--) {
+            array[shift+1] = array[shift];
         }
-        array[toCheck+1] = temp;
+        array[toCheck+1] = valueToInsert;
     }
 }
 
