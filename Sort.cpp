@@ -60,11 +60,16 @@ void maxHeapify(Array& array, int i, int size) {
     }
 }
 
+void heapifyArray(Array& array, int size) {
+    for (int i=size/2; i>=0; i--)
+        maxHeapify(array, i, size);
+}
+
 void heapSort(Array& array) {
+    heapifyArray(array, SIZE);
     for (int size=SIZE; size>1; size--) {
-        for (int i=size/2; i>=0; i--)
-            maxHeapify(array, i, size);
         std::swap(array[0], array[size-1]);
+        maxHeapify(array, 0, size-1);
     }
 }
 
