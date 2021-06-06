@@ -113,7 +113,7 @@ Array mergeSort(Array& array) {
 
 
 
-int partition(Array& array, int low, int high) {
+int partitionHigh(Array& array, int low, int high) {
     int pivot = array[high];
     int i = low;
     for (int j=low; j<high; j++) {
@@ -126,9 +126,22 @@ int partition(Array& array, int low, int high) {
     return i;
 }
 
+int partitionLow(Array& array, int low, int high) {
+    int pivot = array[low];
+    int i = low+1;
+    for (int j=low+1; j<=high; j++) {
+        if (array[j] < pivot) {
+            std::swap(array[i], array[j]);
+            i++;
+        }
+    }
+    std::swap(array[i-1], array[low]);
+    return i-1;
+}
+
 void quickSort(Array& array, int low, int high) {
     if (low < high) {
-        int pivot = partition(array, low, high);
+        int pivot = partitionLow(array, low, high);
         quickSort(array, low, pivot-1);
         quickSort(array, pivot+1, high);
     }
