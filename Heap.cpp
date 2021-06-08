@@ -15,11 +15,11 @@ public:
 
     int* storage;
     int storageSize;
-    int size;
+    int dataSize;
     HeapType type;
 
 public:
-    Heap(int storageSize_in, HeapType in_type) : size(0), storageSize(storageSize_in), type(in_type) {
+    Heap(int storageSize_in, HeapType in_type) : dataSize(0), storageSize(storageSize_in), type(in_type) {
         storage = new int[storageSize];
     }
 
@@ -27,8 +27,12 @@ public:
         delete[] storage;
     }
 
+    int size() {
+        return dataSize;
+    }
+
     void clear() {
-        size = 0;
+        dataSize = 0;
     };
 
     int parentIndex(int index) {
@@ -51,7 +55,7 @@ public:
     // confirm heap property is valid
     void display() {
         std::cout << "[" << validate() << "] ";
-        for (int i=0; i<size; i++)
+        for (int i=0; i<dataSize; i++)
             std::cout << storage[i] << "(" << storage[parentIndex(i)]<< ") ";
         std::cout << std::endl;
     }
@@ -59,24 +63,26 @@ public:
 
     // Add a value to the heap and reheapify the storage
     int add(int value) {
-        if (size == storageSize)
+        if (dataSize == storageSize)
             throw std::out_of_range("Storage full");
-        storage[size++] = value;
-        heapifyUp(size-1);
+        storage[dataSize++] = value;
+        heapifyUp(dataSize-1);
         return 0;
     }
 
     // Return top of heap without modifying the heap
     int front() {
+        if (dataSize <= 0)
+            throw std::out_of_range("Heap is empty");
         return storage[0];
     }
 
      // Return top of heap, reducing size by 1 and the heapify the remainder
     int pop() {
-        if (size <= 0)
-            return -1;
+        if (dataSize <= 0)
+            throw std::out_of_range("Heap is empty");
         int value = storage[0];
-        storage[0] = storage[--size];
+        storage[0] = storage[--dataSize];
         heapifyDown(0);
         return value;
     }
@@ -90,9 +96,9 @@ public:
         switch (type) {
         case Max: {
             int largest = index;
-            if ((size > left) && (storage[left] > storage[largest]))
+            if ((dataSize > left) && (storage[left] > storage[largest]))
                 largest = left;
-            if ((size > right) && (storage[right] > storage[largest]))
+            if ((dataSize > right) && (storage[right] > storage[largest]))
                 largest = right;
             if (largest != index) {
                 std::swap(storage[index], storage[largest]);
@@ -103,9 +109,9 @@ public:
 
         case Min: {
             int smallest = index;
-            if ((size > left) && (storage[left] < storage[smallest]))
+            if ((dataSize > left) && (storage[left] < storage[smallest]))
                 smallest = left;
-            if ((size > right) && (storage[right] < storage[smallest]))
+            if ((dataSize > right) && (storage[right] < storage[smallest]))
                 smallest = right;
             if (smallest != index) {
                 std::swap(storage[index], storage[smallest]);
@@ -142,14 +148,14 @@ public:
 
     // Heapify an invalid heap
     void heapify() {
-        for (int i=size/2; i>=0; i--) {
+        for (int i=dataSize/2; i>=0; i--) {
             heapifyDown(i);
         }
     }
 
     // return invalid index or 0 if valid
     int validate() {
-        for (int index=1; index<size; index++) {
+        for (int index=1; index<dataSize; index++) {
             switch (type) {
             case Max:
                 if (storage[parentIndex(index)] < storage[index])
@@ -180,7 +186,7 @@ int main() {
 
     // Randomize storage
     h.clear();
-    h.size = SIZE;
+    h.dataSize = SIZE;
     for (int i=0; i<SIZE; i++)
         h.storage[i] = rand() % 100;
     h.display();
