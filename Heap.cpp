@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <stdexcept>
 
 class Heap
 {
@@ -12,12 +13,18 @@ public:
         Min
     };
 
-    int storage[1024];
+    int* storage;
+    int storageSize;
     int size;
     HeapType type;
 
 public:
-    Heap(HeapType in_type) : size(0), type(in_type) {
+    Heap(int storageSize_in, HeapType in_type) : size(0), storageSize(storageSize_in), type(in_type) {
+        storage = new int[storageSize];
+    }
+
+    ~Heap() {
+        delete[] storage;
     }
 
     void clear() {
@@ -52,12 +59,19 @@ public:
 
     // Add a value to the heap and reheapify the storage
     int add(int value) {
+        if (size == storageSize)
+            throw std::out_of_range("Storage full");
         storage[size++] = value;
         heapifyUp(size-1);
         return 0;
     }
 
-    // Return top of heap, reducing size by 1 and the heapify the remainder
+    // Return top of heap without modifying the heap
+    int front() {
+        return storage[0];
+    }
+
+     // Return top of heap, reducing size by 1 and the heapify the remainder
     int pop() {
         if (size <= 0)
             return -1;
@@ -154,8 +168,8 @@ public:
 
 
 int main() {
-    Heap h(Heap::Max);
     const int SIZE = 20;
+    Heap h(SIZE, Heap::Max);
 
     srand(time(NULL));
     for (int i=0; i<SIZE; i++)
